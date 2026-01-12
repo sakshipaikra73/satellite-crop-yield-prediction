@@ -1,21 +1,14 @@
 🌾 Satellite-Based Crop Yield Prediction using Sentinel-2 & Deep Learning
+
 📌 Overview
 
-This project implements an end-to-end AI-driven pipeline to predict agricultural crop yield using Sentinel-2 satellite imagery and deep learning. The system extracts NDVI-based vegetation features from multispectral satellite data and trains a Convolutional Neural Network (CNN) to accurately predict farm-level crop yield.
+This project implements an end-to-end AI-driven pipeline to predict agricultural crop yield using Sentinel-2 satellite imagery and deep learning. The system extracts NDVI-based vegetation features from multispectral satellite data and trains a Convolutional Neural Network (CNN) to predict farm-level crop yield.
 
-The solution combines remote sensing, computer vision, and machine learning to support precision agriculture, yield forecasting, and agritech decision-making.
+The solution combines remote sensing, computer vision, and machine learning to support precision agriculture and data-driven agritech decision-making.
 
 🎯 Problem Statement
 
-Traditional crop yield estimation relies on manual surveys and historical averages, which are time-consuming, expensive, and often inaccurate. This project aims to:
-
-Automate crop monitoring using satellite imagery
-
-Quantify vegetation health using NDVI
-
-Predict crop yield ahead of harvest using deep learning
-
-Build a scalable and location-independent solution
+Traditional crop yield estimation relies on manual surveys and historical averages, which are time-consuming and often inaccurate. This project aims to automate crop yield prediction using satellite imagery and deep learning to provide scalable, accurate, and early forecasts.
 
 🛰️ Data Source
 
@@ -27,178 +20,95 @@ Revisit Frequency: ~5 days
 
 Spectral Bands Used:
 
-Band 4 (RED – Visible spectrum, 665 nm)
+Band 4 – RED (Visible spectrum)
 
-Band 8 (NIR – Near Infrared, 842 nm)
+Band 8 – NIR (Near Infrared)
 
 🌱 NDVI Feature Extraction
 
-Vegetation health is measured using the Normalized Difference Vegetation Index (NDVI):
+Vegetation health is quantified using the Normalized Difference Vegetation Index (NDVI).
 
-𝑁
-𝐷
-𝑉
-𝐼
-=
-𝑁
-𝐼
-𝑅
-−
-𝑅
-𝐸
-𝐷
-𝑁
-𝐼
-𝑅
-+
-𝑅
-𝐸
-𝐷
-NDVI=
-NIR+RED
-NIR−RED
-	​
+NDVI Formula (Plain Text):
 
-Interpretation:
+NDVI = (NIR − RED) / (NIR + RED)
 
-NDVI ∈ [-1, +1]
+Where:
 
-Higher NDVI → healthier vegetation
+NIR = Near Infrared band (Band 8)
 
-Lower NDVI → stressed or sparse vegetation
+RED = Red band (Band 4)
 
-NDVI values are computed per pixel, masked by farm boundaries, and time-stamped for temporal analysis.
+NDVI values range from -1 to +1:
 
-🔍 Data Acquisition Pipeline
+Higher values indicate healthy vegetation
 
-Farm boundaries defined using GeoJSON
+Lower values indicate stressed or sparse vegetation
 
-Sentinel-2 imagery retrieved via Sentinelsat (Copernicus API)
+NDVI values are calculated for each pixel, masked using farm boundaries, and time-stamped for temporal modeling.
 
-Relevant spectral bands downloaded
+🔍 Data Acquisition
 
-Data stored locally for preprocessing
+Farm boundaries are defined using GeoJSON files
+
+Sentinel-2 imagery is fetched using the Sentinelsat (Copernicus) API
+
+Relevant spectral bands are downloaded automatically
+
+Data is stored locally for preprocessing
 
 🧪 Preprocessing Pipeline
 
 Crop satellite images to farm boundaries
 
-Extract RED and NIR bands
+Extract RED and NIR spectral bands
 
-Compute NDVI for each timestamp
+Compute NDVI values
 
-Normalize NDVI values
+Normalize NDVI values for model input
 
-Stack multi-temporal NDVI images into tensors
-
-Generate structured inputs for deep learning
-
-Tools Used:
-
-GDAL / Rasterio – Read and process geospatial raster data
-
-OpenCV – Image resizing and cropping
-
-NumPy – Numerical operations
-
-Matplotlib – Data visualization
+Stack multi-temporal NDVI data into structured tensors
 
 🤖 Model Architecture
 
-A custom CNN regression model built using TensorFlow:
+A custom deep learning regression model is built using TensorFlow.
 
-Architecture Details:
+Model Details:
 
-Input Shape: (1, 32, 10, 13) NDVI tensor
+Input: NDVI-based time-series tensors
 
-Layers:
+Three convolutional blocks:
 
-3 Convolutional blocks
+Convolution layer with ReLU activation
 
-Convolution + ReLU
+Batch normalization
 
-Batch Normalization
+Dropout for regularization
 
-Dropout (regularization)
-
-Flatten layer
-
-Fully Connected (Dense) layers
+Fully connected (dense) layers
 
 Output: Continuous crop yield value
 
 Training Configuration:
 
-Loss Function: Mean Squared Error (L2 Loss)
+Loss Function: Mean Squared Error (MSE)
 
-𝑀
-𝑆
-𝐸
-=
-1
-𝑛
-∑
-𝑖
-=
-1
-𝑛
-(
-𝑦
-𝑖
-−
-𝑦
-^
-𝑖
-)
-2
-MSE=
-n
-1
-	​
+MSE Formula (Plain Text):
 
-i=1
-∑
-n
-	​
-
-(y
-i
-	​
-
-−
-y
-^
-	​
-
-i
-	​
-
-)
-2
+MSE = (1 / n) × Σ (actual_yield − predicted_yield)²
 
 Optimizer: Adam
 
-Regularization: Dropout + L2 weight decay
-
-🧩 System Architecture
-flowchart TD
-    A[Farm Coordinates / GeoJSON] --> B[Sentinelsat API]
-    B --> C[Sentinel-2 Satellite Images]
-    C --> D[Extract RED & NIR Bands]
-    D --> E[NDVI Computation]
-    E --> F[NDVI Time-Series Tensor]
-    F --> G[CNN Model (TensorFlow)]
-    G --> H[Crop Yield Prediction]
+Regularization: Dropout and L2 weight decay
 
 📈 Results & Performance
 
 Processed 50+ NDVI tensors from multi-temporal Sentinel-2 imagery
 
-Achieved high correlation (~0.82) between predicted and actual yields
+Achieved high correlation (~0.82) between predicted and actual crop yields
 
-Validation loss showed smooth convergence
+Validation loss showed smooth convergence during training
 
-NDVI trends aligned with known seasonal crop growth patterns
+NDVI trends aligned well with known seasonal crop growth cycles
 
 🛠️ Technologies Used
 Programming Language
@@ -228,16 +138,23 @@ GeoJSON
 Python standard libraries
 
 🚀 How to Run
-# Step 1: Download Sentinel-2 satellite data
+
+Download Sentinel-2 satellite data:
+
 python Sentinel_data_scraper.py
 
-# Step 2: Preprocess data and compute NDVI
+
+Preprocess images and compute NDVI:
+
 python Cropping_preprocessing.py
 
-# Step 3: Train the CNN model
+
+Train the deep learning model:
+
 python Model_TF.py
 
-# Step 4: Evaluate results and visualize predictions
+
+Evaluate predictions and visualize results
 
 🌍 Real-World Applications
 
@@ -251,16 +168,16 @@ Crop insurance risk assessment
 
 Food supply chain optimization
 
-🔮 Future Enhancements
+🔮 Future Improvements
 
 Integrate weather and soil moisture data
 
-Use transformer-based temporal models
+Improve temporal modeling using advanced architectures
 
 Deploy as a web-based decision support system
 
-Extend to multi-crop and multi-region prediction
+Extend the model to multiple crops and regions
 
 📄 Summary
 
-This project demonstrates a complete AI-powered pipeline that transforms raw satellite imagery into accurate, farm-level crop yield predictions. By automating data acquisition, NDVI feature extraction, and deep learning-based modeling, it provides a scalable and practical solution for real-world agritech and sustainability initiatives.
+This project presents a complete AI-driven pipeline that converts raw Sentinel-2 satellite imagery into accurate, farm-level crop yield predictions. By automating data acquisition, NDVI feature extraction, and deep learning-based modeling, it supports smarter agricultural planning and scalable agritech solutions.
